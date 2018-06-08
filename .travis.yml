@@ -1,0 +1,11 @@
+language: go
+go:
+    - 1.10.2
+
+script:
+    - go clean
+    - go vet -v
+    - go test -v -cover
+    - go build -ldflags "all=-X main.version=$(git describe --tags) -s -w"
+    - ./healthcheck -version
+    - ./healthcheck http://www.google.com

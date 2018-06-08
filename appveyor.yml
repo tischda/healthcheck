@@ -20,16 +20,16 @@ install:
 build_script:
   - for /f "delims=" %%a in ('git describe --tags') do @set version=%%a
   - ps: Update-AppveyorBuild -Version $env:version
-  - go build -ldflags "-X main.version=%version% -s"
+  - go build -ldflags "all=-X main.version=%version% -s"
 
 test_script:
-  - go-archetype.exe -version
+  - healthcheck.exe -version
   - go test -v -cover
   - go test -v | go2xunit -xunitnet > xunit-report.xml
 
 artifacts:
-  - path: go-archetype.exe
-    name: go-archetype
+  - path: healthcheck.exe
+    name: healthcheck
 
 deploy: off
 
