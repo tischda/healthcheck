@@ -1,4 +1,4 @@
-﻿# healthcheck [![Build status](https://ci.appveyor.com/api/projects/status/apwc7sg9sak0syjx?svg=true)](https://ci.appveyor.com/project/tischda/go-archetype)
+﻿# healthcheck [![Build status](https://travis-ci.org/tischda/healthcheck.svg?branch=master)](https://travis-ci.org/tischda/healthcheck)
 
 Utility written in [Go](https://www.golang.org).
 
@@ -13,9 +13,11 @@ go get github.com/tischda/healthcheck
 ### Usage
 
 ~~~
+
 ~~~
 
 Example:
 
 ~~~
+
 ~~~
