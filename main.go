@@ -31,7 +31,7 @@ func main() {
 	flag.Parse()
 
 	if flag.Arg(0) == "version" || *flagVersion {
-		fmt.Println("hugo-search version", version)
+		fmt.Println("healthcheck version", version)
 		return
 	}
 
