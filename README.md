@@ -1,6 +1,14 @@
 ﻿# healthcheck [![Build status](https://travis-ci.org/tischda/healthcheck.svg?branch=master)](https://travis-ci.org/tischda/healthcheck)
 
-Utility written in [Go](https://www.golang.org).
+Command line utility to monitor a web service inside a docker container. The utility has 2 parameters: the
+URL to monitor and a string to match in the response.
+
+If the string is found, then the healthcheck is successful, otherwise it fails. If no string is specified,
+then only the HTTP response code is checked (<400 means OK).
+
+You use the healthcheck instruction in a dockerfile (see example below).
+
+More information at https://docs.docker.com/engine/reference/builder/#healthcheck
 
 ### Install
 
