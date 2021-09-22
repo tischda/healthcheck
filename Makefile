@@ -1,41 +1,39 @@
 # ---------------------------------------------------------------------------
-# Makefile for GO utilities
+# Makefile for CLI utilities
 # ---------------------------------------------------------------------------
 
-PROJECT_DIR=$(notdir $(shell pwd))
+BUILD_TAG=$(shell git describe --tags 2>/dev/null || echo undefined)
+LDFLAGS=-ldflags=all="-X main.version=${BUILD_TAG} -s -w"
 
-BUILD_TAG=$(shell git describe --tags)
-LDFLAGS=all=-ldflags "-X main.version=${BUILD_TAG} -s -w"
-
-all: get build
-
-init:
-	sed -i "s/PROJECT_NAME/${PROJECT_DIR}/g" CHANGELOG.md README.md main.go
+all: build
 
 build:
 	go build ${LDFLAGS}
 
-get:
-	go get
-
-test: fmt vet
+test:
 	go test -v -cover
 
 cover:
 	go test -coverprofile=coverage.out
 	go tool cover -html=coverage.out
 
-fmt:
-	go fmt
-
-vet:
-	go vet -v
-
 install:
 	go install ${LDFLAGS} ./...
 
+update:
+	go get -u
+	go mod tidy
+	# https://github.com/golang/go/issues/45161
+	go mod vendor
+
+snapshot:
+	goreleaser --snapshot --skip-publish --rm-dist
+
+release: 
+	goreleaser release --rm-dist
+
 dist: clean build
-	upx -9 ${PROJECT_DIR}.exe
+	upx -9 *.exe
 
 clean:
 	go clean
