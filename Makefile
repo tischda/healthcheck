@@ -27,10 +27,10 @@ update:
 	go mod vendor
 
 snapshot:
-	goreleaser --snapshot --skip-publish --rm-dist
+	goreleaser --snapshot --skip-publish --clean
 
 release: 
-	goreleaser release --rm-dist
+	goreleaser release --clean
 
 dist: clean build
 
