@@ -28,7 +28,7 @@ func init() {
 
 func main() {
 	flag.Usage = func() {
-		fmt.Fprintf(os.Stderr, "Usage: %s <URL> [text to search for in HTTP response]\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "Usage: %s [OPTIONS] <URL> [text to search for in HTTP response]\nOPTIONS:\n", os.Args[0])
 		flag.PrintDefaults()
 	}
 
@@ -84,8 +84,6 @@ func info(v ...interface{}) {
 }
 
 func fatal(v ...interface{}) {
-	if !flagQuiet {
-		log.Println(v...)
-	}
+	info(v...)
 	os.Exit(1)
 }

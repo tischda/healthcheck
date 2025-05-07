@@ -36,3 +36,4 @@ dist: clean build
 
 clean:
 	go clean
+	rm -f coverage.out

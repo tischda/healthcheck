@@ -45,7 +45,7 @@ func TestHealthCheckPass(t *testing.T) {
 	// start a dummy web server
 	go serve()
 	time.Sleep(time.Second)
-	healthCheck("http://localhost:"+PORT, "")
+	healthCheck("http://localhost:"+PORT, "alive")
 }
 
 func TestHealthCheckFail(t *testing.T) {
