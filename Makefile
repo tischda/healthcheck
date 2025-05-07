@@ -33,7 +33,6 @@ release:
 	goreleaser release --rm-dist
 
 dist: clean build
-	upx -9 *.exe
 
 clean:
 	go clean
