@@ -1,4 +1,4 @@
-﻿# healthcheck [![Build status](https://travis-ci.org/tischda/healthcheck.svg?branch=master)](https://travis-ci.org/tischda/healthcheck)
+﻿# healthcheck [![Go](https://github.com/tischda/healthcheck/actions/workflows/go.yml/badge.svg)](https://github.com/tischda/healthcheck/actions/workflows/go.yml)
 
 Command line utility to monitor a web service inside a docker container. The utility has 2 parameters: the
 URL to monitor and a string to match in the response.
