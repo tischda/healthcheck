@@ -1,3 +1,5 @@
 vendor/**/
 healthcheck
 healthcheck.exe
+# Added by goreleaser init:
+dist/
