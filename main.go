@@ -13,14 +13,17 @@ import (
 
 var version string
 
-var flagQuiet = flag.Bool("quiet", false, "do not print anything to console")
-var flagVersion = flag.Bool("version", false, "print version and exit")
-var flagTimeout = flag.Int("timeout", 30, "connection timeout in seconds")
+var flagQuiet bool
+var flagVersion bool
+var flagTimeout int
 
 func init() {
-	flag.BoolVar(flagQuiet, "q", false, "")
-	flag.BoolVar(flagVersion, "v", false, "")
-	flag.IntVar(flagTimeout, "t", 30, "")
+	flag.BoolVar(&flagQuiet, "quiet", false, "do not print anything to console")
+	flag.BoolVar(&flagQuiet, "q", false, "do not print anything to console (shorthand)")
+	flag.BoolVar(&flagVersion, "version", false, "print version and exit")
+	flag.BoolVar(&flagVersion, "v", false, "print version and exit (shorthand)")
+	flag.IntVar(&flagTimeout, "timeout", 30, "connection timeout in seconds")
+	flag.IntVar(&flagTimeout, "t", 30, "connection timeout in seconds (shorthand)")
 }
 
 func main() {
@@ -32,7 +35,7 @@ func main() {
 	log.SetFlags(0)
 	flag.Parse()
 
-	if flag.Arg(0) == "version" || *flagVersion {
+	if flag.Arg(0) == "version" || flagVersion {
 		fmt.Println("healthcheck version", version)
 		return
 	}
@@ -46,7 +49,7 @@ func main() {
 
 func healthCheck(url string, text string) {
 	client := http.Client{
-		Timeout: time.Duration(*flagTimeout) * time.Second,
+		Timeout: time.Duration(flagTimeout) * time.Second,
 	}
 	resp, err := client.Get(url)
 	if err != nil {
@@ -75,13 +78,13 @@ func checkHttpBody(url string, body io.ReadCloser, text string) {
 }
 
 func info(v ...interface{}) {
-	if !*flagQuiet {
+	if !flagQuiet {
 		log.Println(v...)
 	}
 }
 
 func fatal(v ...interface{}) {
-	if !*flagQuiet {
+	if !flagQuiet {
 		log.Println(v...)
 	}
 	os.Exit(1)
