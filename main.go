@@ -4,21 +4,23 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"strings"
+	"time"
 )
 
 var version string
 
 var flagQuiet = flag.Bool("quiet", false, "do not print anything to console")
 var flagVersion = flag.Bool("version", false, "print version and exit")
+var flagTimeout = flag.Int("timeout", 30, "connection timeout in seconds")
 
 func init() {
 	flag.BoolVar(flagQuiet, "q", false, "")
 	flag.BoolVar(flagVersion, "v", false, "")
+	flag.IntVar(flagTimeout, "t", 30, "")
 }
 
 func main() {
@@ -43,7 +45,10 @@ func main() {
 }
 
 func healthCheck(url string, text string) {
-	resp, err := http.Get(url)
+	client := http.Client{
+		Timeout: time.Duration(*flagTimeout) * time.Second,
+	}
+	resp, err := client.Get(url)
 	if err != nil {
 		fatal("Connection error:", err)
 	} else {
@@ -60,7 +65,7 @@ func healthCheck(url string, text string) {
 
 func checkHttpBody(url string, body io.ReadCloser, text string) {
 	defer body.Close()
-	bodyBytes, err := ioutil.ReadAll(body)
+	bodyBytes, err := io.ReadAll(body)
 	if err != nil {
 		fatal(url, ": Error reading HTTP body:", err)
 	}
@@ -77,6 +82,7 @@ func info(v ...interface{}) {
 
 func fatal(v ...interface{}) {
 	if !*flagQuiet {
-		log.Fatalln(v...)
+		log.Println(v...)
 	}
+	os.Exit(1)
 }
