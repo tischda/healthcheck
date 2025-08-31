@@ -1,5 +1,4 @@
-vendor/**/
-healthcheck
-healthcheck.exe
-# Added by goreleaser init:
+*.exe
+coverage.out
 dist/
+releaseinfo
