@@ -21,14 +21,14 @@
     "StringFileInfo": {
         "Comments": "",
         "CompanyName": "",
-        "FileDescription": "Project description",
+        "FileDescription": "Healthcheck",
         "FileVersion": "",
         "InternalName": "",
         "LegalCopyright": "© 2025 Daniel TISCHER",
         "LegalTrademarks": "",
-        "OriginalFilename": "{{ .Project }}.exe",
+        "OriginalFilename": "healthcheck.exe",
         "PrivateBuild": "",
-        "ProductName": "{{ .Project }}",
+        "ProductName": "healthcheck",
         "ProductVersion": "",
         "SpecialBuild": ""
     },

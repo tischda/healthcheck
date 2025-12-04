@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"io"
 	"log"
 	"net/http"
@@ -45,14 +46,14 @@ func TestHealthCheckPass(t *testing.T) {
 	// start a dummy web server
 	go serve()
 	time.Sleep(time.Second)
-	healthCheck("http://localhost:"+PORT, "alive")
+	healthCheck(&Config{timeout: 2, quiet: true}, "http://localhost:"+PORT, "alive")
 }
 
 func TestHealthCheckFail(t *testing.T) {
 
 	if os.Getenv("BE_CRASHER") == "1" {
 		// This is the test process - run healthCheck which should exit with code 1
-		healthCheck("http://localhost:"+PORT, "")
+		healthCheck(&Config{timeout: 2, quiet: true}, "http://localhost:"+PORT, "")
 		// If we get here, healthCheck didn't exit as expected
 		return
 	}
@@ -68,4 +69,51 @@ func TestHealthCheckFail(t *testing.T) {
 		return
 	}
 	t.Fatalf("Process ran with err %v, want exit status 1", err)
+}
+
+func TestInitFlags(t *testing.T) {
+	// Save original command line and reset flags
+	originalArgs := os.Args
+	originalCommandLine := flag.CommandLine
+
+	defer func() {
+		os.Args = originalArgs
+		flag.CommandLine = originalCommandLine
+	}()
+
+	// Create a new flag set for this test
+	flag.CommandLine = flag.NewFlagSet(os.Args[0], flag.ExitOnError)
+
+	// Test initFlags() function
+	cfg := initFlags()
+
+	// Test default values
+	if cfg.help != false {
+		t.Errorf("Expected help default to be false, got %v", cfg.help)
+	}
+	if cfg.version != false {
+		t.Errorf("Expected version default to be false, got %v", cfg.version)
+	}
+
+	// Test that flags can be parsed
+	testArgs := []string{
+		"progname",
+		"-?",
+		"-v",
+	}
+
+	// Reset flag set and reinitialize
+	flag.CommandLine = flag.NewFlagSet(os.Args[0], flag.ExitOnError)
+	cfg = initFlags()
+
+	// Parse test arguments
+	err := flag.CommandLine.Parse(testArgs[1:])
+	if err != nil {
+		t.Fatalf("Failed to parse flags: %v", err)
+	}
+
+	// Verify flags were set correctly
+	if !cfg.version {
+		t.Error("Expected version flag to be true")
+	}
 }

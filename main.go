@@ -11,32 +11,67 @@ import (
 	"time"
 )
 
-var version string
+// https://goreleaser.com/cookbooks/using-main.version/
+var (
+	name    string
+	version string
+	date    string
+	commit  string
+)
 
-var flagQuiet bool
-var flagVersion bool
-var flagTimeout int
+// flags
+type Config struct {
+	quiet   bool
+	timeout int
+	help    bool
+	version bool
+}
 
-func init() {
-	flag.BoolVar(&flagQuiet, "quiet", false, "do not print anything to console")
-	flag.BoolVar(&flagQuiet, "q", false, "do not print anything to console (shorthand)")
-	flag.BoolVar(&flagVersion, "version", false, "print version and exit")
-	flag.BoolVar(&flagVersion, "v", false, "print version and exit (shorthand)")
-	flag.IntVar(&flagTimeout, "timeout", 30, "connection timeout in seconds")
-	flag.IntVar(&flagTimeout, "t", 30, "connection timeout in seconds (shorthand)")
+func initFlags() *Config {
+	cfg := &Config{}
+	flag.BoolVar(&cfg.quiet, "quiet", false, "do not print anything to console")
+	flag.BoolVar(&cfg.quiet, "q", false, "do not print anything to console (shorthand)")
+	flag.IntVar(&cfg.timeout, "timeout", 30, "connection timeout in seconds")
+	flag.IntVar(&cfg.timeout, "t", 30, "connection timeout in seconds (shorthand)")
+	flag.BoolVar(&cfg.help, "?", false, "")
+	flag.BoolVar(&cfg.help, "help", false, "displays this help message")
+	flag.BoolVar(&cfg.version, "v", false, "")
+	flag.BoolVar(&cfg.version, "version", false, "print version and exit")
+	return cfg
 }
 
 func main() {
-	flag.Usage = func() {
-		fmt.Fprintf(os.Stderr, "Usage: %s [OPTIONS] <URL> [text to search for in HTTP response]\nOPTIONS:\n", os.Args[0])
-		flag.PrintDefaults()
-	}
-
 	log.SetFlags(0)
+	cfg := initFlags()
+	flag.Usage = func() {
+		fmt.Fprintln(os.Stderr, "Usage: "+name+` [OPTIONS] <URL> [string to look for in HTTP response]
+
+OPTIONS:
+  -q, --quiet
+          do not print anything to console
+  -t int
+          connection timeout in seconds (shorthand) (default 30)
+  -timeout int
+          connection timeout in seconds (default 30)
+  -?, --help
+          display this help message
+  -v, --version
+          print version and exit
+
+EXAMPLES:`)
+
+		fmt.Fprintln(os.Stderr, "\n  $ "+name+` https://example.com examples
+  https://example.com : Online - response: 200`)
+	}
 	flag.Parse()
 
-	if flag.Arg(0) == "version" || flagVersion {
-		fmt.Println("healthcheck version", version)
+	if flag.Arg(0) == "version" || cfg.version {
+		fmt.Printf("%s %s, built on %s (commit: %s)\n", name, version, date, commit)
+		return
+	}
+
+	if cfg.help {
+		flag.Usage()
 		return
 	}
 
@@ -44,24 +79,26 @@ func main() {
 		flag.Usage()
 		os.Exit(1)
 	}
-	healthCheck(flag.Arg(0), flag.Arg(1))
+	healthCheck(cfg, flag.Arg(0), flag.Arg(1))
 }
 
-func healthCheck(url string, text string) {
+func healthCheck(cfg *Config, url string, text string) {
 	client := http.Client{
-		Timeout: time.Duration(flagTimeout) * time.Second,
+		Timeout: time.Duration(cfg.timeout) * time.Second,
 	}
 	resp, err := client.Get(url)
 	if err != nil {
-		fatal("Connection error:", err)
+		log.Fatalln("Connection error:", err)
 	} else {
 		if resp.StatusCode < 400 {
-			info(url, ": Online - response:", resp.StatusCode)
+			if !cfg.quiet {
+				log.Println(url, ": Online - response:", resp.StatusCode)
+			}
 			if text != "" {
 				checkHttpBody(url, resp.Body, text)
 			}
 		} else {
-			fatal(url, ": Error - response:", resp.StatusCode)
+			log.Fatalln(url, ": Error - response:", resp.StatusCode)
 		}
 	}
 }
@@ -70,20 +107,9 @@ func checkHttpBody(url string, body io.ReadCloser, text string) {
 	defer body.Close()
 	bodyBytes, err := io.ReadAll(body)
 	if err != nil {
-		fatal(url, ": Error reading HTTP body:", err)
+		log.Fatalln(url, ": Error reading HTTP body:", err)
 	}
 	if !strings.Contains(string(bodyBytes), text) {
-		fatal(url, ": Error - string not found in HTTP response:", text)
+		log.Fatalln(url, ": Error - string not found in HTTP response:", text)
 	}
-}
-
-func info(v ...interface{}) {
-	if !flagQuiet {
-		log.Println(v...)
-	}
-}
-
-func fatal(v ...interface{}) {
-	info(v...)
-	os.Exit(1)
 }

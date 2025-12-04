@@ -32,16 +32,37 @@ go install github.com/tischda/healthcheck@latest
 ## Usage
 
 ~~~
-Usage: healthcheck.exe [OPTIONS] <URL> [text to search for in HTTP response]
+Usage: healthcheck [OPTIONS] <URL> [string to look for in HTTP response]
+
 OPTIONS:
-  -q    do not print anything to console (shorthand)
-  -quiet
-        do not print anything to console
+  -q, --quiet
+          do not print anything to console
   -t int
-        connection timeout in seconds (shorthand) (default 30)
+          connection timeout in seconds (shorthand) (default 30)
   -timeout int
-        connection timeout in seconds (default 30)
-  -v    print version and exit (shorthand)
-  -version
-        print version and exit
+          connection timeout in seconds (default 30)
+  -?, --help
+          display this help message
+  -v, --version
+          print version and exit
 ~~~
+
+
+## Examples
+
+~~~
+$ healthcheck https://example.com examples
+https://example.com : Online - response: 200
+~~~
+
+~~~
+$ healthcheck https://example.com notthere
+https://example.com : Online - response: 200
+https://example.com : Error - string not found in HTTP response: notthere
+~~~
+
+~~~
+healthcheck  http://test.com
+Connection error: Get "http://test.com": EOF
+~~~
+
