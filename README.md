@@ -1,4 +1,12 @@
-﻿# healthcheck [![Go](https://github.com/tischda/healthcheck/actions/workflows/go.yml/badge.svg)](https://github.com/tischda/healthcheck/actions/workflows/go.yml)
+﻿[![Build Status](https://github.com/tischda/healthcheck/actions/workflows/build.yml/badge.svg)](https://github.com/tischda/healthcheck/actions/workflows/build.yml)
+[![Test Status](https://github.com/tischda/healthcheck/actions/workflows/test.yml/badge.svg)](https://github.com/tischda/healthcheck/actions/workflows/test.yml)
+[![Coverage Status](https://coveralls.io/repos/tischda/healthcheck/badge.svg)](https://coveralls.io/r/tischda/healthcheck)
+[![Linter Status](https://github.com/tischda/healthcheck/actions/workflows/linter.yml/badge.svg)](https://github.com/tischda/healthcheck/actions/workflows/linter.yml)
+[![License](https://img.shields.io/github/license/tischda/healthcheck)](/LICENSE)
+[![Release](https://img.shields.io/github/release/tischda/healthcheck.svg)](https://github.com/tischda/healthcheck/releases/latest)
+
+
+# healthcheck
 
 Command line utility to monitor a web service inside a docker container. The utility has 2 parameters: the
 URL to monitor and a string to match in the response.
@@ -15,15 +23,13 @@ HEALTHCHECK CMD [ "/healthcheck",  "--quiet",  "http://localhost:8080/api", "sea
 
 More information at https://docs.docker.com/engine/reference/builder/#healthcheck
 
-### Install
-
-There are no dependencies.
+## Install
 
 ~~~
-go get github.com/tischda/healthcheck
+go install github.com/tischda/healthcheck@latest
 ~~~
 
-### Usage
+## Usage
 
 ~~~
 Usage: healthcheck.exe [OPTIONS] <URL> [text to search for in HTTP response]
