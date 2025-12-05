@@ -104,7 +104,7 @@ func healthCheck(cfg *Config, url string, text string) {
 }
 
 func checkHttpBody(url string, body io.ReadCloser, text string) {
-	defer body.Close()
+	defer body.Close() // nolint:errcheck
 	bodyBytes, err := io.ReadAll(body)
 	if err != nil {
 		log.Fatalln(url, ": Error reading HTTP body:", err)
